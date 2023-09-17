@@ -4,9 +4,6 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from scipy.interpolate import interp1d
 
-import numpy as np
-from scipy.interpolate import interp1d
-
 def process_psv_file(file_path):
     # Read the .psv file
     with open(file_path, 'r') as psv_file:
