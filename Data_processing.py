@@ -58,20 +58,6 @@ def process_psv_file(file_path):
 
 data_dir = '/Users/mac/Desktop/Data Science - Studies/TCN_Project/physionet.org/files/challenge-2019/1.0.0/training/training_setA'
 
-'''
-# tests
-i = 0
-for psv in os.listdir(data_dir):
-    print(i)
-    if i > 100:
-        break
-    if '.psv' in psv:
-        psv_path = os.path.join(data_dir, psv)
-        process_psv_file(psv_path)
-        i+=1
-'''
-
-
 class SepsisDataset(Dataset):
     def __init__(self, data_dir):
         self.data_dir = data_dir
@@ -99,12 +85,9 @@ for idx in range(len(dataset)):
 
 
 sys.exit()
+#This is not a way to go:
 data_loader = DataLoader(dataset, batch_size=batch_size)
 
 data_loader = iter(data_loader)
 
 features, labels = next(data_loader)
-
-
-
-print(features, labels)
