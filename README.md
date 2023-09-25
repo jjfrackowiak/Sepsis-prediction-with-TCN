@@ -19,11 +19,6 @@ Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923
 
 ### Confusion Matrix: <br />
 
-  Actual\Predicted   |    0    |    1   | <br />
-_____________________|_________|________| <br />
-          0          |  149712 |   418  | <br />
-_____________________|_________|________| <br />
-          1          |  1785   |   997  | <br />
-_____________________|_________|________| <br />
+<img width="607" alt="Screenshot 2023-09-25 at 13 09 55" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/2a3edb3c-86c3-496b-bb25-2aaf706fbc7c">
 
 Test Balanced Accuracy: 0.6777955079716917, Test Mean Loss: 0.054629570946417516, No. of Sepsis diagnoses out of all obs.: 2782/152912
