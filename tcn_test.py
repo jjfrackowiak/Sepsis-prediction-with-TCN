@@ -131,12 +131,12 @@ with warnings.catch_warnings():
 
         # Print the confusion matrix
         print("Confusion Matrix:")
-        print("  Actual\Predicted   |    0    |    1    |")
-        print("_____________________|________|________|")
+        print("  Actual\Predicted   |    0    |    1   |")
+        print("_____________________|_________|________|")
         print(f"          0          |  {cm[0,0]:^5} |  {cm[0,1]:^5} |")
-        print("_____________________|________|________|")
-        print(f"          1          |  {cm[1,0]:^5} |  {cm[1,1]:^5} |")
-        print("_____________________|_______|_______|")
+        print("_____________________|_________|________|")
+        print(f"          1          |  {cm[1,0]:^5}  |  {cm[1,1]:^5} |")
+        print("_____________________|_________|________|")
 
         print(f'Test Balanced Accuracy: {balanced_accuracy}, Test Mean Loss: {mean_loss}, No. of Sepsis diagnoses out of all obs.: {no_obs_sepsis}/{no_obs}')
 
@@ -144,3 +144,11 @@ with warnings.catch_warnings():
 #----------------------#
 # Results of TCN test: #
 #----------------------#
+#Confusion Matrix:
+#   Actual\Predicted   |    0    |    1   |
+# _____________________|_________|________|
+#           0          |  149712 |   418  |
+# _____________________|_________|________|
+#           1          |  1785   |   997  |
+# _____________________|_________|________|
+# Test Balanced Accuracy: 0.6777955079716917, Test Mean Loss: 0.054629570946417516, No. of Sepsis diagnoses out of all obs.: 2782/152912

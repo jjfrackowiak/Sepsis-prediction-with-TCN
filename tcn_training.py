@@ -93,7 +93,7 @@ l2_reg = 1e-4  # Adjust regularization strength
 optimizer = optim.Adam(model.parameters(), lr=initial_lr)
 
 # Training loop
-num_epochs = 15
+num_epochs = 12
 
 # Iterate through the training dataset for training
 print("Initialising TCN Training...")
@@ -217,3 +217,5 @@ with warnings.catch_warnings():
 #--------------------------#
 # Results of TCN training: #
 #--------------------------#
+# Epoch [12/12], Balanced Accuracy: 0.6632452759551555, Loss: 0.05427886923493302, No. of Sepsis diagnoses out of all obs.: 11357/616289
+# Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923493302
