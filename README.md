@@ -3,7 +3,7 @@ Project based on physionet challenge 2019 - sepsis prediction in hours after adm
 
 # Model Training results:
 
-Epoch [12/12], Balanced Accuracy: 0.6632452759551555, Loss: 0.05427886923493302, No. of Sepsis diagnoses out of all obs.: 11357/616289
+Epoch [12/12], Balanced Accuracy: 0.6632452759551555, Loss: 0.05427886923493302, No. of Sepsis diagnoses out of all obsesrvations : 11357/616289
 Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923493302
 
 ### Loss throught epochs (smoothened and raw):
@@ -17,8 +17,4 @@ Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923
 
 # Test on a hold-out dataset:
 
-### Confusion Matrix: <br />
-
-<img width="607" alt="Screenshot 2023-09-25 at 13 09 55" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/2a3edb3c-86c3-496b-bb25-2aaf706fbc7c">
-
-Test Balanced Accuracy: 0.6777955079716917, Test Mean Loss: 0.054629570946417516, No. of Sepsis diagnoses out of all obs.: 2782/152912
+Test Balanced Accuracy: 0.6777955079716917, Test Mean Loss: 0.054629570946417516, No. of Sepsis cases out of all observations : 2782/152912
