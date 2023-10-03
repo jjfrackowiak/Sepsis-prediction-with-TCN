@@ -8,12 +8,11 @@ Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923
 
 ### Loss throught epochs (smoothened and raw):
 
-<img width="1118" alt="Screenshot 2023-09-25 at 13 04 42" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/e085db40-a3be-448c-9fd8-ca5792dd9205">
+<img width="1145" alt="Screenshot 2023-10-03 at 09 47 48" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/e5d2cd54-752b-4f5b-b797-618458b24bd2">
 
 ### Balanced accuracy throught epochs (smoothened and raw):
 
-<img width="1109" alt="Screenshot 2023-09-25 at 13 02 33" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/85221358-ad07-48d2-8021-3e21d3ce153c">
-
+<img width="1145" alt="Screenshot 2023-10-03 at 09 47 34" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/8b97028c-a0ff-40de-b709-a174c542c86c">
 
 # Test on a hold-out dataset:
 
