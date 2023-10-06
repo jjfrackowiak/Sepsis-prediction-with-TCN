@@ -85,9 +85,7 @@ model = TCNBC(input_size = input_size,
 model = model.to(device).float()
 
 # Define the loss function and optimizer
-#criterion = nn.BCELoss()
-pos_weight = torch.tensor(4) # 5 times more sensitive for positive class
-criterion = nn.BCEWithLogitsLoss(pos_weight = pos_weight) 
+criterion = nn.BCELoss()
 initial_lr = 0.01  # Initial learning rate
 new_lr = initial_lr * 0.3  # Decrease learning rate by 0.7
 l2_reg = 1e-4  # Adjust regularization strength
@@ -95,7 +93,7 @@ l2_reg = 1e-4  # Adjust regularization strength
 optimizer = optim.Adam(model.parameters(), lr=initial_lr)
 
 # Training loop
-num_epochs = 2
+num_epochs = 12
 
 # Iterate through the training dataset for training
 print("Initialising TCN Training...")
@@ -175,13 +173,13 @@ with warnings.catch_warnings():
             optimizer.zero_grad()
             loss.backward()
 
+            
+
             optimizer.step()
 
             labels = batch_y.view(-1, 1)
-            threshold = 0.4
-            logits = torch.sigmoid(outputs)
-            predicted = logits.view(-1, 1)
-            print([logit.item() for logit in logits])
+            threshold = 0.5
+            predicted = outputs.view(-1, 1)
             predicted = (predicted >= threshold).float()
         
             # Collect true labels and predicted labels for the epoch

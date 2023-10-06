@@ -93,17 +93,11 @@ class SepsisDataset(Dataset):
                 # Truncate sequences to max_sequence_length
                 time_series_data = time_series_data[:self.max_sequence_length, :]
             elif len(time_series_data) < self.max_sequence_length:
-                # Pad sequences to max_sequence_length with the last row
-                last_row = time_series_data[-1].unsqueeze(0)  # Get the last row and add an extra dimension
-                padding = last_row.repeat(self.max_sequence_length - len(time_series_data), 1)  # Repeat the last row
+                # Pad sequences to max_sequence_length
+                padding = torch.full((self.max_sequence_length - len(time_series_data), time_series_data.shape[1]), 
+                                     fill_value=np.nan, dtype=torch.float16)
                 time_series_data = torch.cat((time_series_data, padding))
-
-        if 1 in time_series_data[:, -1]:
-            # Replace zeros in the last column with ones if it is a Sepsis case
-            # NN will anticipate it 
-            time_series_data[:, -1] = 1
-
-
+        
         return variable_names, time_series_data
 
 

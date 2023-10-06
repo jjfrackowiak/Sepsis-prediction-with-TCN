@@ -48,7 +48,9 @@ with open('scaler.pkl', 'rb') as file:
 # Test #
 #------#
 
-criterion = nn.BCELoss()
+#criterion = nn.BCELoss()
+pos_weight = torch.tensor(4) # 5 times more sensitive for positive class
+criterion = nn.BCEWithLogitsLoss(pos_weight = pos_weight) 
 
 # Evaluate the model on the test set
 # Fit the scaler on the training data
@@ -106,13 +108,17 @@ with warnings.catch_warnings():
             # Append predictions and labels
             labels = batch_y.view(-1, 1)
             threshold = 0.4
-            predicted = outputs.view(-1, 1)
+            logits = torch.sigmoid(outputs)
+            predicted = logits.view(-1, 1)
             predicted = (predicted >= threshold).float()
 
             test_labels.extend([lab.item() for lab in labels])
             test_predictions.extend([pred_lab.item() for pred_lab in predicted])
             running_loss += loss.item()
 
+            if 1 in labels:
+                l_p = [(l.item(),p.item()) for l,p in zip(labels,predicted)]
+                print("Labels,Predictions", l_p)
             if (idx+1) % 20 == 0:
                 print(f'Test Batch [{idx+1}/{len(test_loader)}], Loss: {loss.item()}')
         

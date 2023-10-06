@@ -77,4 +77,4 @@ class TCNBC(nn.Module):
         """Inputs have to have dimension (N, C_in, L_in)"""
         y1 = self.tcn(inputs)  # input should have dimension (N, C, L)
         o = self.linear(y1[:, :, -1])
-        return self.sigmoid(o)
+        return o #self.sigmoid(o)
