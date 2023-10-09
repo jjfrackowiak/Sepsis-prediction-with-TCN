@@ -16,7 +16,10 @@ from torch.utils.data import Dataset, DataLoader
 from scipy.interpolate import interp1d
 
 from tcn import *
-from data_processing import *
+from trials.data_processing import *
+
+# Multiprocessing
+import multiprocessing
 
 #See Tensorboard after training by typing into terminal: "tensorboard --logdir=runs --port=6007"
 from torch.utils.tensorboard import SummaryWriter
@@ -29,157 +32,167 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 #-----------------#
 # Data processing #
 #-----------------#
-data_dir = '../files/challenge-2019/1.0.0/training/training_setA'
+
+data_dir = '../files/challenge-2019/1.0.0/training'
 
 # Set the maximum sequence length
 max_sequence_length = 100
 
-train_dataset = SepsisDataset(data_dir, is_train = True, max_sequence_length = max_sequence_length)
-test_dataset = SepsisDataset(data_dir, is_train = False, max_sequence_length = max_sequence_length)
+train_dataset = SepsisDataset(data_dir,
+                              is_train = True,
+                              max_sequence_length = max_sequence_length)
 
 # Initialize train and test dataloaders
-batch_size = 32
+batch_size = 128
+
+# Get the half of the number of CPU cores available 
+num_workers = round(multiprocessing.cpu_count()/2)
+
+# This function will be called when each worker process is initialized
+def worker_init_fn(worker_id):
+    # Suppressing warnings caused by processing NaNs
+    warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 # Load the test/train dataset with DataLoader
-train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=False)
-test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
+train_loader = DataLoader(dataset=train_dataset,
+                          batch_size=batch_size,
+                          shuffle=False,
+                          num_workers = num_workers,
+                          worker_init_fn = worker_init_fn)
+if __name__ == '__main__':
+    # Fit a StandardScaler on the training data
+    scaler = StandardScaler()
 
-# Fit a StandardScaler on the training data
-scaler = StandardScaler()
+    # Fit the scaler on the training data (without biasing it with zeroes)
+    # Time series data requires flattening 
+    warnings.filterwarnings("ignore", category=RuntimeWarning)
+    for idx, [input, targets] in enumerate(train_loader):
+        # Flatten input tensor to 2dims
+        if len(input.shape) == 3:
+            input = input.view(-1, input.size(2))
 
-# Fit the scaler on the training data
-with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", category = RuntimeWarning)  # Training on NaN-padded data
-    for idx, [variable_names, batch] in enumerate(train_loader):
-
-        # Flatten batch tensor to 2dims
-        if len(batch.shape) == 3:
-            batch = batch.view(-1, batch.size(2))
-
-        # Extract batch_X with features
-        batch_X = batch[:, :-1].clone().detach()
-
-        # Fit the scaler on batch_X
-        scaler.partial_fit(batch_X) 
+        # Fit the scaler on input
+        scaler.partial_fit(input) 
         if (idx+1)%20 == 0:
             print(f'Training StandardScaler: Batch [{idx+1}/{len(train_loader)}]')
 
-# Save the scaler to a file
-with open('scaler.pkl', 'wb') as file:
-    pickle.dump(scaler, file)
+    # Save the scaler to a separate file
+    with open('scaler.pkl', 'wb') as file:
+        pickle.dump(scaler, file)
 
-#----------#
-# Training #
-#----------#
+    def scale_inputs(input, scaler):
+        # Flatten input tensor to 2dims for scaling
+        input_flat = input.view(-1, input.size(2))
+        
+        # Scale the flattened tensor 
+        input_scaled = torch.tensor(scaler.transform(input_flat)).float()
 
-# Initialize the model
-input_size = 100
-output_size = 100
-num_channels = [150, 150] #Default is [150, 150, 150, 150]
-kernel_size = 3
-model = TCNBC(input_size = input_size, 
-              output_size = output_size, 
-              num_channels = num_channels,
-              kernel_size = kernel_size,
-              dropout=0.2)
-model = model.to(device).float()
+        # Calculate the original batch size
+        original_batch_size = input.size(0)
 
-# Define the loss function and optimizer
-criterion = nn.BCELoss()
-initial_lr = 0.01  # Initial learning rate
-new_lr = initial_lr * 0.3  # Decrease learning rate by 0.7
-l2_reg = 1e-4  # Adjust regularization strength
+        # Calculate the new batch size after flattening
+        new_batch_size = input_flat.size(0)
 
-optimizer = optim.Adam(model.parameters(), lr=initial_lr)
+        # Calculate the number of time steps (columns) in the original shape
+        num_time_steps = input.size(2)
 
-# Training loop
-num_epochs = 12
+        # Reshape input_scaled back to its original shape
+        input_scaled = input_scaled.view(original_batch_size,
+                                            new_batch_size // original_batch_size,
+                                            num_time_steps)
+        return input_scaled
+    
+    #----------#
+    # Training #
+    #----------#
 
-# Iterate through the training dataset for training
-print("Initialising TCN Training...")
-with warnings.catch_warnings():
-    warnings.filterwarnings("ignore", category = RuntimeWarning)  # Training on NaN-padded data
+    # Initialize the model
+    input_size = 100
+    output_size = 100
+    num_channels = [150, 150] #Default is [150, 150, 150, 150]
+    kernel_size = 3
+    model = TCNBC(input_size = input_size, 
+                output_size = output_size, 
+                num_channels = num_channels,
+                kernel_size = kernel_size,
+                dropout=0.2)
+    model = model.to(device).float()
+
+    # Define the loss function and optimizer
+    pos_weight = torch.tensor(10) # 10 times more sensitive to positive class (loss will be inflated)
+    criterion = nn.BCEWithLogitsLoss(pos_weight = pos_weight) 
+    initial_lr = 0.01  # Initial learning rate
+    new_lr = initial_lr * 0.3  # Decrease learning rate by 0.7
+    l2_reg = 1e-4  # Adjust regularization strength
+
+    optimizer = optim.Adam(model.parameters(), lr=initial_lr)
+
+    # Training loop
+    num_epochs = 12
+
+    # Iterate through the training dataset for training
+    print("Initialising TCN Training...")
     for i in range(num_epochs):
         running_loss = 0.0
         true_labels = []
         predicted_labels = []
 
         # Iterate over batches for training
-        for idx, [variable_names, batch] in enumerate(train_loader):
+        for idx, [input, targets] in enumerate(train_loader):
 
-            # Extract batch_X (all columns except the last one) and batch_y (last column)
-            batch_X = batch[:, :, :-1].clone().detach()
-            
-            # Flatten batch tensor to 2dims for scaling
-            batch_X_scaled = batch_X_flat = batch_X.view(-1, batch_X.size(2))
-            
-            # Scale the flattened tensor 
-            batch_X_scaled = torch.tensor(scaler.transform(batch_X_flat)).float()
+            # Apply standard scaling
+            input_scaled = scale_inputs(input, scaler)
 
-            # Calculate the original batch size
-            original_batch_size = batch_X.size(0)
+            # Check if any target values are NaN in targets
+            padding_mask = ~torch.isnan(targets)
 
-            # Calculate the new batch size after flattening
-            new_batch_size = batch_X_flat.size(0)
-
-            # Calculate the number of time steps (columns) in the original shape
-            num_time_steps = batch_X.size(2)
-
-            # Reshape batch_X_scaled back to its original shape
-            batch_X_scaled = batch_X_scaled.view(original_batch_size, new_batch_size // original_batch_size, num_time_steps)
-            batch_y = batch[:, :, -1].clone().detach() # Assuming the last column contains the labels
-
-            # Check if any target values are NaN in batch_y
-            padding_mask = ~torch.isnan(batch_y)
-
-            # Check for NaN values in the batch_X (before replacing with 0)
-            nan_mask = torch.isnan(batch_X_scaled)
+            # Check for NaN values in the input (before replacing with 0)
+            nan_mask = torch.isnan(input_scaled)
             has_nan = torch.any(nan_mask)
 
             # Zeroing-out NaN values which could not be mean imputed or interpolated
             if has_nan:
-                batch_X_scaled[torch.isnan(batch_X_scaled)] = 0
+                input_scaled[torch.isnan(input_scaled)] = 0
 
                 # Reduce learning rate and apply regularization
-                for param_group in optimizer.param_groups:
-                    param_group['lr'] = new_lr
+                # for param_group in optimizer.param_groups:
+                #    param_group['lr'] = new_lr
                 # Apply L2 regularization
                 l2_loss = 0.0
                 for param in model.parameters():
                     l2_loss += torch.norm(param, p=2)
 
-                outputs = model(batch_X_scaled).float()
+                outputs = model(input_scaled).float()
 
-                # Select rows from outputs and batch_y where there are no NaNs
+                # Select rows from outputs and targets where there are no NaNs
                 outputs = outputs[padding_mask].to(device)
-                batch_y = batch_y[padding_mask].to(device)
+                targets = targets[padding_mask].to(device)
 
                 # Regularised loss
-                loss = criterion(outputs, batch_y) + l2_reg * l2_loss
+                loss = criterion(outputs, targets) + l2_reg * l2_loss
                 
             else:
-                outputs = model(batch_X_scaled).float()
+                outputs = model(input_scaled).float()
 
-                # Select rows from outputs and batch_y where there are no NaNs
+                # Select rows from outputs and targets where there are no NaNs
                 outputs = outputs[padding_mask].to(device)
-                batch_y = batch_y[padding_mask].to(device)
+                targets = targets[padding_mask].to(device)
 
                 # Use the normal learning rate and no regularization
-                if np.nan in outputs or np.nan in batch_y:
+                if np.nan in outputs or np.nan in targets:
                     continue
                 
-                loss = criterion(outputs, batch_y)
+                loss = criterion(outputs, targets)
 
             optimizer.zero_grad()
             loss.backward()
 
-            
-
             optimizer.step()
 
-            labels = batch_y.view(-1, 1)
-            threshold = 0.5
-            predicted = outputs.view(-1, 1)
+            labels = targets.view(-1, 1)
+            threshold = 0.4
+            logits = torch.sigmoid(outputs)
+            predicted = logits.view(-1, 1)
             predicted = (predicted >= threshold).float()
         
             # Collect true labels and predicted labels for the epoch
@@ -214,8 +227,8 @@ with warnings.catch_warnings():
     FILE = "Sepsis_TCN_model.pth"
     torch.save(model, FILE)
 
-#--------------------------#
-# Results of TCN training: #
-#--------------------------#
-# Epoch [12/12], Balanced Accuracy: 0.6632452759551555, Loss: 0.05427886923493302, No. of Sepsis diagnoses out of all obs.: 11357/616289
-# Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923493302
+    #--------------------------#
+    # Results of TCN training: #
+    #--------------------------#
+    # Epoch [12/12], Balanced Accuracy: 0.6632452759551555, Loss: 0.05427886923493302, No. of Sepsis diagnoses out of all obs.: 11357/616289
+    # Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923493302
