@@ -41,18 +41,13 @@ The adventage of this approach over the one with one-step forward prediction is 
 
 ### Training results:
 
-Epoch [10/10], Balanced Accuracy (Train): 0.8049861799025777, AUC Score (Train): 0.8049861799025778, Loss (Train): 0.20019800427991882, No. of Sepsis diagnoses out of all obs.: 18451/1207498
-
-Epoch [10/10], Balanced Accuracy (Validation): 0.8048171351568002, AUC Score (Validation): 0.8048171351568002, Loss (Validation): 0.11600673198699951, No. of Sepsis diagnoses out of all obs. (Validation): 4563/301643
-
-
 | Metric | Training (Epoch 10/10) | Validation (Epoch 10/10) |
 | ------------- | ------------- | ------------- |
 | Balanced Accuracy | 0.8049 | 0.8048 |
 | AUC Score | 0.8049  | 0.8048 |
-| Weighted Loss (*) | 0.2001  | 0.1160 |
+| Weighted Loss* | 0.2001  | 0.1160 |
 | Positive class frequency | 18451/1207498 | 4563/301643 |
-* Because of severe class inbalance nn.BCEWithLogitsLoss() with pos_weight = 10 was utilised
+\* Because of severe class inbalance nn.BCEWithLogitsLoss() with pos_weight = 10 was utilised
 
 #### Loss throughout epochs for training (gray) and validation (blue):
 
