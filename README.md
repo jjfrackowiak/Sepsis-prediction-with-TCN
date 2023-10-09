@@ -1,6 +1,6 @@
 ### Sepsis-prediction-with-TCN
 
-Project based on [Physionet challenge 2019](https://moody-challenge.physionet.org/2019/) - sepsis prediction in hours after admission to ICU unit. The utilised model is a PyTorch implementation of Temporal Convulutional Network (TCN). 
+Project based on a subject for [Physionet challenge 2019](https://moody-challenge.physionet.org/2019/) -  sepsis prediction in hours after admission to ICU unit. The utilised model is a PyTorch implementation of Temporal Convulutional Network (TCN). 
 The economic goal in this task is to perform diagnosis as early as possible without sacrificing hospital resources for treating falsely identified cases.
 
 #### Training directory structure
