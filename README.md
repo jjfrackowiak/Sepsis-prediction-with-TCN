@@ -30,6 +30,52 @@ Model was trained on a dataset of hourly measurements of 40643 patients register
         └── p120000.psv
 ```
 
+### Features included in data:
+| Category                | Column | Description                                     |
+|-------------------------|--------|-------------------------------------------------|
+| Vital signs             | 1      | Heart rate (beats per minute)                  |
+|                         | 2      | Pulse oximetry (%)                             |
+|                         | 3      | Temperature (Deg C)                           |
+|                         | 4      | Systolic BP (mm Hg)                           |
+|                         | 5      | Mean arterial pressure (mm Hg)                |
+|                         | 6      | Diastolic BP (mm Hg)                          |
+|                         | 7      | Respiration rate (breaths per minute)         |
+|                         | 8      | End tidal carbon dioxide (mm Hg)             |
+| Laboratory values       | 9      | Measure of excess bicarbonate (mmol/L)        |
+|                         | 10     | Bicarbonate (mmol/L)                          |
+|                         | 11     | Fraction of inspired oxygen (%)               |
+|                         | 12     | pH (N/A)                                       |
+|                         | 13     | Partial pressure of carbon dioxide (mm Hg)    |
+|                         | 14     | Oxygen saturation from arterial blood (%)     |
+|                         | 15     | Aspartate transaminase (IU/L)                 |
+|                         | 16     | Blood urea nitrogen (mg/dL)                   |
+|                         | 17     | Alkaline phosphatase (IU/L)                   |
+|                         | 18     | Calcium (mg/dL)                               |
+|                         | 19     | Chloride (mmol/L)                             |
+|                         | 20     | Creatinine (mg/dL)                            |
+|                         | 21     | Bilirubin direct (mg/dL)                      |
+|                         | 22     | Serum glucose (mg/dL)                         |
+|                         | 23     | Lactic acid (mg/dL)                           |
+|                         | 24     | Magnesium (mmol/dL)                           |
+|                         | 25     | Phosphate (mg/dL)                            |
+|                         | 26     | Potassium (mmol/L)                            |
+|                         | 27     | Total bilirubin (mg/dL)                       |
+|                         | 28     | Troponin I (ng/mL)                            |
+|                         | 29     | Hematocrit (%)                                |
+|                         | 30     | Hemoglobin (g/dL)                             |
+|                         | 31     | Partial thromboplastin time (seconds)         |
+|                         | 32     | Leukocyte count (count*10^3/µL)              |
+|                         | 33     | Fibrinogen (mg/dL)                            |
+|                         | 34     | Platelets (count*10^3/µL)                    |
+| Demographics            | 35     | Age (Years, 100 for patients 90 or above)     |
+|                         | 36     | Gender (Female: 0, Male: 1)                   |
+|                         | 37     | Administrative identifier for ICU unit (Unit1)|
+|                         | 38     | Administrative identifier for ICU unit (Unit2)|
+|                         | 39     | Hours between hospital admit and ICU admit (HospAdmTime)|
+|                         | 40     | ICU length-of-stay (hours since ICU admit, ICULOS)|
+| Outcome                 | 41     | SepsisLabel (1 for sepsis patients, 0 otherwise)|
+
+
 ### Data processing:
 
 Target (sepsis diagnosis) is already marked 6 hours before clinical diagnosis (for every patient/sample) allowing for teaching the network to recognise sepsis earlier than clinician (yet not too early). Missing values have been interpolated or median-filled whenever possible. Remaining NaN's have been replaced by zeroes. 
