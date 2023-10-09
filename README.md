@@ -47,16 +47,17 @@ The adventage of this approach over the one with one-step forward prediction is 
 | AUC Score | 0.8049  | 0.8048 |
 | Weighted Loss* | 0.2001  | 0.1160 |
 | Positive class frequency | 18451/1207498 | 4563/301643 |
+
 \* Because of severe class inbalance nn.BCEWithLogitsLoss() with pos_weight = 10 was utilised
 
 #### Loss throughout epochs for training (gray) and validation (blue):
 
-<img width="1142" alt="Loss" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/aafb9cc5-26f8-49de-a219-f6bdbdb3a4e4">
+<img width="900" alt="Loss" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/aafb9cc5-26f8-49de-a219-f6bdbdb3a4e4">
 
 
 #### ROC_AUC score throughout epochs for training (gray) and validation (blue):
 
-<img width="1143" alt="Roc_auc" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/503c4766-8eea-4cfd-9e08-e9281a0744d2">
+<img width="900" alt="Roc_auc" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/503c4766-8eea-4cfd-9e08-e9281a0744d2">
 
 
 
