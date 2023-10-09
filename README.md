@@ -1,19 +1,52 @@
 ### Sepsis-prediction-with-TCN
-Project based on physionet challenge 2019 - sepsis prediction in hours after admission to ICU unit. The utilised model is a pytorch implementation of TCN.
+
+Project based on physionet challenge 2019 - sepsis prediction in hours after admission to ICU unit. The utilised model is a pytorch implementation of TCN. 
+
+### Data processing:
+
+Target (sepsis diagnosis) is already shifted 6 hours for every case
+
+
+```python
+── training
+    ├── index.html
+    ├── training_setA
+    │   ├── index.html
+    │   ├── p000001.psv
+    │   ├── p000002.psv
+    │   ├── p000003.psv
+    │   ├── p000004.psv
+    │   ├── p000005.psv
+    │   ├── ...
+    │   └── p020643.psv
+    └── training_setB
+        ├── index.html
+        ├── p100001.psv
+        ├── p100002.psv
+        ├── p100003.psv
+        ├── p100004.psv
+        ├── p100005.psv
+        ├── ...
+        └── p120000.psv
+```
+### TCN architecture (sequence-to-sequence model, many-to-many)
+
 
 ### Model Training results:
 
-Epoch [12/12], Balanced Accuracy: 0.6632452759551555, Loss: 0.05427886923493302, No. of Sepsis diagnoses out of all obsesrvations : 11357/616289
-Mean Epoch Balanced Accuracy: 0.6632452759551555, Mean Epoch Loss: 0.05427886923493302
+Epoch [10/10], Balanced Accuracy (Train): 0.8049861799025777, AUC Score (Train): 0.8049861799025778, Loss: 0.20019800427991882, No. of Sepsis diagnoses out of all obs.: 18451/1207498
 
-Loss throughout epochs (smoothened and raw):
+Epoch [10/10], Balanced Accuracy (Validation): 0.8048171351568002, AUC Score (Validation): 0.8048171351568002, Loss (Validation): 0.11600673198699951, No. of Sepsis diagnoses out of all obs. (Validation): 4563/301643
 
-<img width="1145" alt="Screenshot 2023-10-03 at 09 47 48" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/e5d2cd54-752b-4f5b-b797-618458b24bd2"> <br>
+Loss throughout epochs for training (gray) and validation (blue):
 
-Balanced accuracy throughout epochs (smoothened and raw):
+<img width="1142" alt="Loss" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/aafb9cc5-26f8-49de-a219-f6bdbdb3a4e4">
 
-<img width="1145" alt="Screenshot 2023-10-03 at 09 47 34" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/8b97028c-a0ff-40de-b709-a174c542c86c">
 
-### Test on a hold-out dataset:
+ROC_AUC score throughout epochs for training (gray) and validation (blue):
 
-Test Balanced Accuracy: 0.6777955079716917, Test Mean Loss: 0.054629570946417516, No. of Sepsis cases out of all observations : 2782/152912
+<img width="1143" alt="Roc_auc" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/503c4766-8eea-4cfd-9e08-e9281a0744d2">
+
+
+
+
