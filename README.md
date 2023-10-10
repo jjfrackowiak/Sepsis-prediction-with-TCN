@@ -158,7 +158,7 @@ Output of the last fully connected layer is later fed to a loss function of clas
 | Weighted Loss* | 0.2001  | 0.1160 |
 | Positive class frequency | 18451/1207498 | 4563/301643 |
 
-\* Because of severe class imbalance nn.BCEWithLogitsLoss() with pos_weight = 10 was utilised. Weightening may cause the loss value to be inflated and not directly interpretable.
+\* Because of severe class imbalance nn.BCEWithLogitsLoss() with pos_weight = 10 was utilised. Weightening may cause the loss value to be inflated and not interpretable in absolute terms.
 
 #### Loss throughout 10 epochs for training (gray) and validation (blue):
 
