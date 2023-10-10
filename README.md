@@ -84,7 +84,10 @@ Each sample has been either truncated or NaN-padded to the length of 100 observa
 
 ### TCN architecture 
 
-Utilised architecture is a sequence-to-sequence or many-to-many Temporal Convolutional Net. 
+Utilised architecture is a sequence-to-sequence or many-to-many Temporal Convolutional Net based on following implementation: 
+
+https://github.com/locuslab/TCN/blob/master/TCN/tcn.py
+
 The advantage of this approach over one-step forward prediction is the ability to take account of all provided information unlimited to selected window.
 
 ```python
