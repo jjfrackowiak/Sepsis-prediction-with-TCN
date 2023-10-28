@@ -153,21 +153,23 @@ Output of the last fully connected layer is later fed to a loss function of clas
 
 | Metric | Training (Epoch 10/10) | Validation (Epoch 10/10) |
 | ------------- | ------------- | ------------- |
-| Balanced Accuracy | 0.8049 | 0.8048 |
-| AUC Score | 0.8049  | 0.8048 |
-| Weighted Loss* | 0.2001  | 0.1160 |
+| Balanced Accuracy (cut-off at 0.3) | 0.84998 | 0.85610 |
+| AUC Score | 0.95934  | 0.95878 |
+| Weighted Loss* | 0.18424  | 0.10105 |
 | Positive class frequency | 18451/1207498 | 4563/301643 |
 
 \* Because of severe class imbalance nn.BCEWithLogitsLoss() with pos_weight = 10 was utilised. Weightening may cause the loss value to be inflated and not interpretable in absolute terms.
 
 #### Loss throughout 10 epochs for training (gray) and validation (blue):
+<img width="900" alt="Loss" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/dec195ac-1ec0-4081-8176-a3b96eb3e5ce">
 
-<img width="900" alt="Roc_auc" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/503c4766-8eea-4cfd-9e08-e9281a0744d2">
 
 #### ROC_AUC score throughout 10 epochs for training (gray) and validation (blue):
-<img width="900" alt="Loss" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/aafb9cc5-26f8-49de-a219-f6bdbdb3a4e4">
+<img width="900" alt="ROC_AUC" src="https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/b24cf8b3-f619-4536-b19e-19d03bda38ca">
 
 
+#### ROC curve for trained model (validation set):
+![roc_curve](https://github.com/jjfrackowiak/Sepsis-prediction-with-TCN/assets/84077365/11f49c04-eef0-41a4-84b1-fae318bb8c5f)
 
 
 
