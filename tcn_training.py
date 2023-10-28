@@ -92,7 +92,7 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
             optimizer.step()
 
             labels = targets.view(-1, 1)
-            threshold = 0.4
+            threshold = 0.3
             logits = torch.sigmoid(outputs)
             predicted = logits.view(-1, 1)
             predicted_classes = (predicted >= threshold).float()
