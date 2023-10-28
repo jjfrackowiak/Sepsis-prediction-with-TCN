@@ -63,6 +63,7 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
         running_loss = 0.0
         true_labels = []
         predicted_labels = []
+        probs = []
 
         # Training loop
         model.train()  # Set the model to training mode
@@ -94,10 +95,11 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
             threshold = 0.4
             logits = torch.sigmoid(outputs)
             predicted = logits.view(-1, 1)
-            predicted = (predicted >= threshold).float()
+            predicted_classes = (predicted >= threshold).float()
 
             true_labels.extend([lab.item() for lab in labels])
-            predicted_labels.extend([pred_lab.item() for pred_lab in predicted])
+            predicted_labels.extend([pred_lab.item() for pred_lab in predicted_classes])
+            probs.extend([prob.item() for prob in predicted])
             running_loss += loss.item()
 
             if (idx+1) % 20 == 0:
@@ -108,7 +110,7 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
         no_obs_sepsis = len([1 for lab in true_labels if lab == 1])
 
         balanced_accuracy = balanced_accuracy_score(true_labels, predicted_labels)
-        roc_auc = roc_auc_score(true_labels, predicted_labels)
+        roc_auc = roc_auc_score(true_labels, probs)
 
         writer_train.add_scalar('Balanced accuracy', balanced_accuracy, i)
         writer_train.add_scalar('AUC Score', roc_auc, i)
@@ -121,6 +123,7 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
         val_running_loss = 0.0
         val_true_labels = []
         val_predicted_labels = []
+        val_predicted_no_thresh = []
 
         with torch.no_grad():
             for idx, [val_input, val_targets] in enumerate(val_loader):
@@ -136,10 +139,11 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
                 val_labels = val_targets.view(-1, 1)
                 val_logits = torch.sigmoid(val_outputs)
                 val_predicted = val_logits.view(-1, 1)
-                val_predicted = (val_predicted >= threshold).float() # Threshold equal to training
+                val_predicted_thresh = (val_predicted >= threshold).float() # Threshold equal to training
 
                 val_true_labels.extend([lab.item() for lab in val_labels])
-                val_predicted_labels.extend([pred_lab.item() for pred_lab in val_predicted])
+                val_predicted_no_thresh.extend([pred_lab.item() for pred_lab in val_predicted])
+                val_predicted_labels.extend([pred_lab.item() for pred_lab in val_predicted_thresh])
                 val_running_loss += loss.item()
 
             if (idx + 1) % 20 == 0:
@@ -150,7 +154,7 @@ def train_model(writer_train, writer_val, model, train_loader, val_loader, scale
         val_no_obs_sepsis = len([1 for lab in val_true_labels if lab == 1])
 
         val_balanced_accuracy = balanced_accuracy_score(val_true_labels, val_predicted_labels)
-        val_roc_auc = roc_auc_score(val_true_labels, val_predicted_labels)
+        val_roc_auc = roc_auc_score(val_true_labels, val_predicted_no_thresh)
 
         writer_val.add_scalar('Balanced accuracy', val_balanced_accuracy, i)
         writer_val.add_scalar('AUC Score', val_roc_auc, i)

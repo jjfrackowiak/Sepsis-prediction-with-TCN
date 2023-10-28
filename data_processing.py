@@ -103,6 +103,6 @@ class SepsisDataset(Dataset):
                 padding = torch.tensor(np.nan * np.ones(padding_shape), dtype=torch.float32)
                 
                 # Concatenate the original data with the padding
-                time_series_data = torch.cat((time_series_data, padding))
+                time_series_data = torch.cat((padding, time_series_data))
 
         return time_series_data[:, :-1], time_series_data[:, -1]

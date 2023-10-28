@@ -2,13 +2,14 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.nn.utils import weight_norm
+from torchsummary import summary
 
 
 class Chomp1d(nn.Module):
     def __init__(self, chomp_size):
         super(Chomp1d, self).__init__()
         self.chomp_size = chomp_size
-
+        
     def forward(self, x):
         return x[:, :, :-self.chomp_size].contiguous()
 
@@ -75,6 +76,7 @@ class TCNBC(nn.Module):
 
     def forward(self, inputs):
         """Inputs have to have dimension (N, C_in, L_in)"""
+        #inputs = inputs[0, :, :]
         y1 = self.tcn(inputs)  # input should have dimension (N, C, L)
         o = self.linear(y1[:, :, -1])
         return o #self.sigmoid(o)
